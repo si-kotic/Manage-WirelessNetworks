@@ -14,19 +14,30 @@ Function Get-AvailableWirelessNetworks {
     }
     IF ($SSID) {
         $wLANs | Where-Object {$_.SSID -eq $SSID}
-    }
-    ELSE {
+    } ELSE {
         $wLANs
     }
 }
 
+Function ConnectTo-WirelessNetwork {
+    Param (
+        $SSID
+    )
+    IF ($SSID.GetType().Name -eq "PSCustomObject") {
+        $ssidName = $SSID.SSID
+    } ELSEIF ($SSID.GetType().Name -eq "String") {
+        $SSID = Get-AvailableWirelessNetworks -SSID $SSID
+        $ssidName = $SSID.SSID
+    }
+    $wlanProfile = netsh wlan show profiles name=$ssidName
+    IF ($wlanProfile -eq ('Profile "' + $ssidName + '" is not found on the system.')) {
+        Write-Host "New Wireless Network detected.  Not yet supported" -ForegroundColor Red
+    }
+    netsh wlan connect ssid=$ssidName name=$ssidName
+}
 
-
-netsh wlan connect ssid=aveil-engin name=aveil-engin # Connect to a saved Wifi Network
-
-netsh wlan connect ssid="YOURSSID" key="YOURPW" # Conenct to a new Wifi Network
-
-
+<# NOTES
+netsh wlan set profileparameter name=$ssidName SSIDname=$ssidName autoSwitch=no ConnectionMode=auto Randomization=no authentication=WPA2PSK encryption=AES keyType=passphrase keyMaterial=$pwd
 
 netsh wlan set profileparameter /?
 
@@ -45,3 +56,5 @@ Usage: set profileparameter [name=]<string> [[interface=]<string>]
        [heldPeriod=1-3600] [AuthPeriod=1-3600] [StartPeriod=1-3600]
        [maxStart=1-100] [maxAuthFailures=1-100] [cacheUserData = yes|no]
        [cost=default|unrestricted|fixed|variable]
+
+#>
