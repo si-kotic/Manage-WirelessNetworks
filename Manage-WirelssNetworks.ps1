@@ -75,6 +75,14 @@ Function Get-WirelessNetworkProfiles {
         }
         netsh wlan show profiles name="$ssidName"
     } ELSE {
-        netsh wlan show profiles
+        $response = netsh wlan show profiles
+        $profiles = $response[9..($response.length-1)].Trim() -replace "\s{5}:\s","," | Foreach-Object {
+            $report = "" | Select SSID,UserProfile
+            $obj = $_.Split(",")
+            $report.SSID = $obj[1]
+            $report.UserProfile = $obj[0]
+            $report
+        }
+        $profiles
     }
 }
