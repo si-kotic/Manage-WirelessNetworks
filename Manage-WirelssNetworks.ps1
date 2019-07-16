@@ -1,8 +1,8 @@
-Function Create-WirelessNetworkProfile {
+Function Export-WirelessNetworkProfile {
     Param (
         $SSID,
-        $Authentication = "WPA2PSK",
-        [Parameter(Mandatory,DontShow)][SecureString]$PassPhrase
+        $Path = $PWD,
+        [Switch]$MaskPassword = $false
     )
     IF ($SSID.GetType().Name -eq "PSCustomObject") {
         $ssidName = $SSID.SSID
@@ -10,40 +10,18 @@ Function Create-WirelessNetworkProfile {
         $SSID = Get-AvailableWirelessNetworks -SSID $SSID
         $ssidName = $SSID.SSID
     }
-    $sampleProfile = [xml]@"
-<?xml version="1.0" encoding="UTF-8"?>
-<WLANProfile xmlns="https://www.microsoft.com/networking/WLAN/profile/v1">
-    <name>$ssidName</name>
-    <SSIDConfig>
-        <SSID>
-            <name>$ssidName</name>
-        </SSID>
-    </SSIDConfig>
-    <connectionType>ESS</connectionType>
-    <connectionMode>auto</connectionMode>
-    <autoSwitch>false</autoSwitch>
-    <MSM>
-        <security>
-            <authEncryption>
-                <authentication>$Authentication</authentication>
-                <encryption>AES</encryption>
-                <useOneX>false</useOneX>
-            </authEncryption>
-            <sharedKey>
-                <keyType>passPhrase</keyType>
-                <protected>false</protected>
-                <keyMaterial> <!-- insert key here --> </keyMaterial>
-            </sharedKey>
-        </security>
-    </MSM>
-</WLANProfile>
-"@
-    $tmpFileName = "$($env:temp)\sampleProfile.xml"
-    $sampleProfile.Save($tempFileName)
-    add profile filename=$tempFileName user=current
-    Remove-Item -Path $tempFileName -Force
-    $UnsecurePassword = (New-Object PSCredential "user",$Password).GetNetworkCredential().Password
-    netsh wlan set profileparameter name=$ssidName keyMaterial=$UnsecurePassword
+    IF ($MaskedPassword) {
+        netsh wlan export profile name=$ssidName folder="$Path"
+    } ELSE {
+        netsh wlan export profile name=$ssidName folder="$Path" key=clear
+    }
+}
+
+Function Import-WirelessNetworkProfile {
+    Param (
+        $Profile
+    )
+    netsh wlan add profile filename="$Profile"
 }
 
 Function Get-AvailableWirelessNetworks {
