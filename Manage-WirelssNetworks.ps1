@@ -61,3 +61,20 @@ Function ConnectTo-WirelessNetwork {
     }
     netsh wlan connect ssid=$ssidName name=$ssidName
 }
+
+Function Get-WirelessNetworkProfiles {
+    Param (
+        $SSID
+    )
+    IF ($SSID) {
+        IF ($SSID.GetType().Name -eq "PSCustomObject") {
+            $ssidName = $SSID.SSID
+        } ELSEIF ($SSID.GetType().Name -eq "String") {
+            $SSID = Get-AvailableWirelessNetworks -SSID $SSID
+            $ssidName = $SSID.SSID
+        }
+        netsh wlan show profiles name="$ssidName"
+    } ELSE {
+        netsh wlan show profiles
+    }
+}
