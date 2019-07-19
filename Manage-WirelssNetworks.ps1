@@ -6,7 +6,7 @@ Function Export-WirelessNetworkProfile {
     Param (
         [Parameter(ValueFromPipeline=$true,Mandatory)]$SSID,
         $Path = $PWD,
-        [Switch]$MaskPassword = $false
+        [Switch]$PlaintextPassword
     )
     IF ($SSID.GetType().Name -eq "PSCustomObject") {
         $ssidName = $SSID.SSID
@@ -14,10 +14,10 @@ Function Export-WirelessNetworkProfile {
         $SSID = Get-AvailableWirelessNetworks -SSID $SSID
         $ssidName = $SSID.SSID
     }
-    IF ($MaskedPassword) {
-        netsh wlan export profile name=$ssidName folder="$Path"
-    } ELSE {
+    IF ($PlaintextPassword) {
         netsh wlan export profile name=$ssidName folder="$Path" key=clear
+    } ELSE {
+        netsh wlan export profile name=$ssidName folder="$Path"
     }
 }
 
