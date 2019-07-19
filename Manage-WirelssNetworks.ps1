@@ -47,7 +47,8 @@ Function Get-AvailableWirelessNetworks {
 
 Function ConnectTo-WirelessNetwork {
     Param (
-        $SSID
+        $SSID,
+        $Profile
     )
     IF ($SSID.GetType().Name -eq "PSCustomObject") {
         $ssidName = $SSID.SSID
@@ -59,7 +60,11 @@ Function ConnectTo-WirelessNetwork {
     IF ($wlanProfile -eq ('Profile "' + $ssidName + '" is not found on the system.')) {
         Write-Host "New Wireless Network detected.  Not yet supported" -ForegroundColor Red
     }
-    netsh wlan connect ssid=$ssidName name=$ssidName
+    IF ($Profile) {
+        netsh wlan connect ssid=$ssidName name=$Profile
+    } ELSE {
+        netsh wlan connect ssid=$ssidName name=$ssidName
+    }
 }
 
 Function Get-WirelessNetworkProfiles {
