@@ -1,4 +1,8 @@
 Function Export-WirelessNetworkProfile {
+    <#
+    .LINK
+    https://github.com/si-kotic/Manage-WirelessNetworks
+    #>
     Param (
         $SSID,
         $Path = $PWD,
@@ -18,6 +22,10 @@ Function Export-WirelessNetworkProfile {
 }
 
 Function Import-WirelessNetworkProfile {
+    <#
+    .LINK
+    https://github.com/si-kotic/Manage-WirelessNetworks
+    #>
     Param (
         $Profile
     )
@@ -25,6 +33,10 @@ Function Import-WirelessNetworkProfile {
 }
 
 Function Get-AvailableWirelessNetworks {
+    <#
+    .LINK
+    https://github.com/si-kotic/Manage-WirelessNetworks
+    #>
     Param (
         $SSID
     )
@@ -46,6 +58,10 @@ Function Get-AvailableWirelessNetworks {
 }
 
 Function ConnectTo-WirelessNetwork {
+    <#
+    .LINK
+    https://github.com/si-kotic/Manage-WirelessNetworks
+    #>
     Param (
         $SSID,
         $Profile
@@ -68,6 +84,10 @@ Function ConnectTo-WirelessNetwork {
 }
 
 Function Get-WirelessNetworkProfiles {
+    <#
+    .LINK
+    https://github.com/si-kotic/Manage-WirelessNetworks
+    #>
     Param (
         $SSID
     )
