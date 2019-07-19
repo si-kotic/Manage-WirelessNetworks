@@ -38,7 +38,7 @@ Function Get-AvailableWirelessNetworks {
     https://github.com/si-kotic/Manage-WirelessNetworks
     #>
     Param (
-        [Parameter(ValueFromPipeline=$true,Mandatory)]$SSID
+        [Parameter(ValueFromPipeline=$true)]$SSID
     )
     $response = netsh wlan show networks mode=bssid
     $wLANs = $response | Where-Object {$_ -match "^SSID"} | Foreach-Object {
