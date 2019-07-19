@@ -4,7 +4,7 @@ Function Export-WirelessNetworkProfile {
     https://github.com/si-kotic/Manage-WirelessNetworks
     #>
     Param (
-        $SSID,
+        [Parameter(ValueFromPipeline=$true,Mandatory)]$SSID,
         $Path = $PWD,
         [Switch]$MaskPassword = $false
     )
@@ -27,7 +27,7 @@ Function Import-WirelessNetworkProfile {
     https://github.com/si-kotic/Manage-WirelessNetworks
     #>
     Param (
-        $Profile
+        [Parameter(Mandatory)]$Profile
     )
     netsh wlan add profile filename="$Profile"
 }
@@ -38,7 +38,7 @@ Function Get-AvailableWirelessNetworks {
     https://github.com/si-kotic/Manage-WirelessNetworks
     #>
     Param (
-        $SSID
+        [Parameter(ValueFromPipeline=$true,Mandatory)]$SSID
     )
     $response = netsh wlan show networks mode=bssid
     $wLANs = $response | Where-Object {$_ -match "^SSID"} | Foreach-Object {
@@ -63,7 +63,7 @@ Function ConnectTo-WirelessNetwork {
     https://github.com/si-kotic/Manage-WirelessNetworks
     #>
     Param (
-        $SSID,
+        [Parameter(ValueFromPipeline=$true,Mandatory)]$SSID,
         $Profile
     )
     IF ($SSID.GetType().Name -eq "PSCustomObject") {
@@ -89,7 +89,7 @@ Function Get-WirelessNetworkProfiles {
     https://github.com/si-kotic/Manage-WirelessNetworks
     #>
     Param (
-        $SSID
+        [Parameter(ValueFromPipeline=$true)]$SSID
     )
     IF ($SSID) {
         IF ($SSID.GetType().Name -eq "PSCustomObject") {
